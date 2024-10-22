@@ -1,37 +1,70 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useColorScheme } from 'react-native'
+import { SplashScreen, Stack } from "expo-router";
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { TamaguiProvider } from "@tamagui/core";
+import config from '../tamagui.config'
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import 'react-native-reanimated';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+export { ErrorBoundary } from 'expo-router'
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const [interLoaded, interError] = useFonts({
+    Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+    InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
+  })
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (interLoaded || interError) {
+      SplashScreen.hideAsync()
     }
-  }, [loaded]);
+  }, [interLoaded, interError])
 
-  if (!loaded) {
-    return null;
-  }
+  return (
+    <Providers>
+      <RootLayoutNav />
+    </Providers>
+  );
+}
+
+const Providers = ({ children, ...rest }: { children: React.ReactNode }) => {
+  const colorScheme = useColorScheme()
+
+  return (
+    <TamaguiProvider
+      config={config}
+      defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}
+      {...rest}
+    >{
+        children}
+    </TamaguiProvider>
+  )
+}
+
+
+function RootLayoutNav() {
+  const colorScheme = useColorScheme()
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen
+          name="index"
+          options={{
+            title: 'Mon Journal',
+            headerTransparent: true,
+            headerBlurEffect: colorScheme || 'light',
+            headerLargeTitle: true,
+          }}
+        />
+        <Stack.Screen
+          name="new"
+          options={{
+            presentation: 'modal',
+            title: 'Nouveau Post',
+          }}
+        />
       </Stack>
     </ThemeProvider>
-  );
+  )
 }
