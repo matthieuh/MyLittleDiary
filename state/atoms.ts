@@ -1,15 +1,25 @@
-import { atom } from 'jotai'
+import { atom, useAtomValue } from 'jotai'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { randomUUID } from 'expo-crypto';
 
 export type Post = {
+  id: string;
   content: string;
+  createdAt: Date;
 };
 
 const storage = createJSONStorage<Post[]>(() => AsyncStorage)
 export const postsAtom = atomWithStorage<Post[]>('posts', [], storage);
 
-export const addPostAtom = atom(null, async (get, set, state: Post) => {
+export const addPostAtom = atom(null, async (get, set, state: Pick<Post, 'content'>) => {
   const posts = await get(postsAtom)
-  set(postsAtom, [...posts, state])
+  const newPost = { ...state, id: randomUUID(), createdAt: new Date() }
+  set(postsAtom, [...posts, newPost])
+  // set(postsAtom, [])
 })
+
+export const usePost = (id: string) => {
+  const posts = useAtomValue(postsAtom);
+  return posts.find((post) => post.id === id);
+}

@@ -1,4 +1,4 @@
-import { View, Text, Button, AnimatePresence, Spinner } from "tamagui";
+import { View, Button, AnimatePresence, Spinner } from "tamagui";
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
@@ -25,16 +25,13 @@ export const PostForm = (
     handleSubmit,
   } = useForm<z.infer<typeof PostSchema>>({ resolver })
 
-  console.log({ values: getValues(), isSubmitting })
-
-
-  console.log({ errors })
-
   return (
     <View bg="white" f={1} br="$4" minHeight={90} p="$4" gap="$4" tag="form">
-      <Controller control={control} name="content" render={({ field }) => (
-        <TextAreaField field={field} error={errors?.content} />
-      )} />
+      <Controller
+        control={control}
+        name="content"
+        render={({ field }) => <TextAreaField field={field} error={errors?.content} placeholder="Contenu" />}
+      />
 
       <Button
         onPress={handleSubmit(onSubmit)}

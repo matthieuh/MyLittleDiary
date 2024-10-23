@@ -26,35 +26,32 @@ export const TextAreaField = ({
   field,
   error
 }: TextAreaFieldProps) => {
+  const { maxLength, value, onBlur, onChange, size, ...rest } = field
+
   const themeName = useThemeName();
   const id = useId();
-  const disabled = isSubmitting;
 
   return (
     <Theme name={error ? "red" : themeName} forceClassName>
       <Fieldset>
         {!!label && (
-          <Label theme="alt1" size={field.size || "$3"} htmlFor={id}>
+          <Label theme="alt1" size={size || "$3"} htmlFor={id}>
             {label}
           </Label>
         )}
         <TextArea
-          disabled={disabled}
-          placeholderTextColor="$color10"
-          value={field.value}
+          disabled={isSubmitting}
+          value={value}
           onChangeText={(text) => {
-            console.log("onChangeText", text);
-            if (field.onChange) {
-              field.onChange(text as any); // TO SOLVE
+            if (onChange) {
+              onChange(text as any); // TO SOLVE
             }
           }}
-          onBlur={field.onBlur}
           placeholder={placeholder}
           id={id}
           rows={5}
-          autoFocus
           h={150}
-          {...field}
+          {...rest}
         />
         <FieldError message={error?.message} />
       </Fieldset>
