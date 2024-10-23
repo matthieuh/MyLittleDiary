@@ -31,7 +31,13 @@
     },
     "plugins": [
       "expo-router",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to give ability to import them in your posts."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

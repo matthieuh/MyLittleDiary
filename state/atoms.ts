@@ -6,6 +6,7 @@ import { randomUUID } from 'expo-crypto';
 export type Post = {
   id: string;
   content: string;
+  images?: string[];
   createdAt: Date;
 };
 
