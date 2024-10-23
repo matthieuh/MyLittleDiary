@@ -28,7 +28,6 @@ export default function PostScreen() {
 
   return (
     <YStack fullscreen bg="$white1">
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <FlatList
           data={medias}
@@ -37,6 +36,7 @@ export default function PostScreen() {
           renderItem={({ item: { type, uri } }) => {
             const mediaContainerProps = {
               px: '$2',
+              pt: '$2',
             }
             const mediaProps = {
               key: uri,

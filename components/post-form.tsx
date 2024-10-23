@@ -29,10 +29,12 @@ const resolver = zodResolver(PostSchema)
 
 type PostFormProps = {
   onSubmit: (data: z.infer<typeof PostSchema>) => Promise<void>
+  defaultValues?: z.infer<typeof PostSchema>
+  submitText?: string
 }
 
 export const PostForm = (
-  { onSubmit }: PostFormProps
+  { onSubmit, defaultValues, submitText = 'Publier' }: PostFormProps
 ) => {
   const {
     control,
@@ -41,7 +43,7 @@ export const PostForm = (
     formState: { isSubmitting, errors },
     handleSubmit,
     watch,
-  } = useForm<z.infer<typeof PostSchema>>({ resolver, defaultValues: { medias: [] } });
+  } = useForm<z.infer<typeof PostSchema>>({ resolver, defaultValues: { medias: [], ...defaultValues } });
 
   const medias = watch('medias', [])
 
@@ -139,6 +141,8 @@ export const PostForm = (
       <Button
         onPress={handleSubmit(onSubmit)}
         disabled={isSubmitting}
+        hoverStyle={{ scale: 0.9 }}
+        pressStyle={{ scale: 0.9 }}
         iconAfter={
           <AnimatePresence>
             {isSubmitting && (
@@ -161,7 +165,7 @@ export const PostForm = (
           </AnimatePresence>
         }
       >
-        Publier
+        {submitText}
       </Button>
     </View >
   );

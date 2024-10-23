@@ -6,6 +6,9 @@ import config from '../tamagui.config'
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Button, XStack } from 'tamagui';
+import { ArrowLeft, Ellipsis, FileEdit } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -63,6 +66,7 @@ function RootLayoutNav() {
               headerLargeTitle: true,
             }}
           />
+
           <Stack.Screen
             name="new"
             options={{
@@ -72,7 +76,25 @@ function RootLayoutNav() {
           />
 
           <Stack.Screen
-            name="[id]"
+            name="[id]/index"
+            options={({ route: { params: { id, title } } }: any) => ({ // TODO: avoid any 
+              title,
+              headerBackTitleVisible: false,
+              headerLeft: () => <Button circular size="$3" icon={<ArrowLeft />} scaleIcon={1.6} onPress={() => router.back()} />,
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+              headerRight: () => (
+                <XStack gap="$2">
+                  <Button circular size="$3" icon={<FileEdit />} scaleIcon={1.6} onPress={() => router.replace(`/${id}/edit`)} />
+                  <Button circular size="$3" icon={<Ellipsis />} scaleIcon={1.6} onPress={() => { }} />
+                </XStack>
+              ),
+            })}
+          />
+
+          <Stack.Screen
+            name="[id]/edit"
             options={({ route: { params: { title } } }: any) => ({ // TODO: avoid any 
               presentation: 'modal',
               title,

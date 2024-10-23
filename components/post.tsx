@@ -47,6 +47,7 @@ export const Post = ({ id, content, medias = [], createdAt }: PostProps) => {
           <XStack>
             {medias.slice(0, nbPicturesDisplayable).map(({ type, uri, width, height }, index) => {
               const mediaContainerProps = {
+                key: uri,
                 elevation: '$1',
                 ...(index > 0 && { ml: -PICTURE_OVERLAPPING })
               }
