@@ -2,11 +2,13 @@ import { atom, useAtomValue } from 'jotai'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { randomUUID } from 'expo-crypto';
+import { MediaSchema } from '@/components/post-form';
+import { z } from 'zod';
 
 export type Post = {
   id: string;
   content: string;
-  images?: string[];
+  medias?: z.infer<typeof MediaSchema>[];
   createdAt: Date;
 };
 

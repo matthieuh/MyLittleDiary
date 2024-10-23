@@ -1,17 +1,19 @@
 import { router } from "expo-router";
-import { Card, getTokens, Image, Paragraph, Separator, Text, XStack } from "tamagui";
+import { Card, getTokens, Image, Paragraph, Separator, Text, View, XStack } from "tamagui";
 
 import { Post as PostType } from "@/state/atoms";
 import { formatDate } from "@/utils/format";
 import { useState } from "react";
+import { getSizeKeepsAspectRatio } from "@/utils/media";
+import { VideoPlayer } from "./video-player";
 
 export type PostProps = PostType;
 
 const CARD_PADDING = '$4'
-const PICTURE_OVERLAPPING = 20
+const PICTURE_OVERLAPPING = 10
 const PICTURE_WIDTH = 60
 
-export const Post = ({ id, content, images = [], createdAt }: PostProps) => {
+export const Post = ({ id, content, medias = [], createdAt }: PostProps) => {
   const [nbPicturesDisplayable, setNbPicturesDisplayable] = useState(3);
 
   return (
@@ -39,16 +41,33 @@ export const Post = ({ id, content, images = [], createdAt }: PostProps) => {
         })}</Text>
       </XStack>}
       <Paragraph numberOfLines={1}>{content}</Paragraph>
-      {!!images.length && (<Separator my="$2" />)}
-      {!!images.length && (
-        <XStack>
-          {images.slice(0, nbPicturesDisplayable).map((image, index) => <XStack elevation="$1"><Image key={image} source={{ uri: image }} h={PICTURE_WIDTH} w={PICTURE_WIDTH} br="$2" {...(index > 0 && { ml: -PICTURE_OVERLAPPING })} /></XStack>)}
-          {images.length > nbPicturesDisplayable && (
-            <XStack elevation="$1" bg="$white2" h={PICTURE_WIDTH} w={PICTURE_WIDTH} br="$2" jc="center" ai="center" ml={-PICTURE_OVERLAPPING} borderWidth="$0.5" borderColor="$gray6">
-              <Text fontSize="$6" color="$gray11">+{images.length - nbPicturesDisplayable}</Text>
-            </XStack>
-          )}
-        </XStack>
+      {!!medias.length && (
+        <>
+          <Separator my="$2" />
+          <XStack>
+            {medias.slice(0, nbPicturesDisplayable).map(({ type, uri, width, height }, index) => {
+              const mediaContainerProps = {
+                elevation: '$1',
+                ...(index > 0 && { ml: -PICTURE_OVERLAPPING })
+              }
+              const mediaProps = {
+                source: { uri },
+                ...getSizeKeepsAspectRatio({ height, width, maxHeight: 60, maxWidth: PICTURE_WIDTH }),
+                br: "$4"
+              }
+              if (type === 'image')
+                return <View {...mediaContainerProps}><Image {...mediaProps} /></View>
+
+              if (type === 'video')
+                return <View {...mediaContainerProps}><VideoPlayer {...mediaProps} controllable={false} /></View>
+            })}
+            {medias.length > nbPicturesDisplayable && (
+              <XStack elevation="$1" bg="$white2" h={PICTURE_WIDTH} w={PICTURE_WIDTH} br="$2" jc="center" ai="center" ml={-PICTURE_OVERLAPPING} borderWidth="$0.5" borderColor="$gray6">
+                <Text fontSize="$6" color="$gray11">+{medias.length - nbPicturesDisplayable}</Text>
+              </XStack>
+            )}
+          </XStack>
+        </>
       )}
 
     </Card>

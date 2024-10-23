@@ -37,7 +37,8 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to give ability to import them in your posts."
         }
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
