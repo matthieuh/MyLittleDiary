@@ -4,11 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { TextAreaField } from "./textarea-field";
-import { FileVideo, ImagePlus, Mic, Tags } from "@tamagui/lucide-icons";
-import { ImagePickerAsset, launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
+import { FileVideo, ImagePlus, Mic, SendHorizontal, Tags, Trash } from "@tamagui/lucide-icons";
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { VideoPlayer } from "./video-player";
 import { getSizeKeepsAspectRatio } from "@/utils/media";
 import { useState } from "react";
+import { AudioRecorder } from "./audio-recorder";
+import { Audio } from "expo-av";
+import { AudioPlayer } from "./audio-player";
 
 
 export const MediaSchema = z.object({
@@ -20,9 +23,15 @@ export const MediaSchema = z.object({
   mimeType: z.string().optional(),
 })
 
+export const AudioSchema = z.object({
+  uri: z.string(),
+  duration: z.number(),
+})
+
 const PostSchema = z.object({
   content: z.string(),
   medias: z.array(MediaSchema),
+  audio: AudioSchema.optional(),
 })
 
 const resolver = zodResolver(PostSchema)
@@ -46,8 +55,10 @@ export const PostForm = (
   } = useForm<z.infer<typeof PostSchema>>({ resolver, defaultValues: { medias: [], ...defaultValues } });
 
   const medias = watch('medias', [])
+  const audio = watch('audio')
 
   const [loadingMedia, setLoadingMedia] = useState<MediaTypeOptions | undefined>();
+  const [isRecordingAudio, setIsRecordingAudio] = useState<Boolean>(false);
 
   const pickMedia = (mediaTypes: MediaTypeOptions) => async () => {
     setLoadingMedia(mediaTypes);
@@ -78,12 +89,24 @@ export const PostForm = (
     }
   };
 
+  const addAudio = async (audio: Audio.Recording) => {
+    const uri = audio.getURI();
+    const { durationMillis, ...status } = await audio.getStatusAsync()
+
+    if (uri) {
+      setValue('audio', {
+        uri,
+        duration: durationMillis,
+      });
+    }
+  }
+
   return (
     <View bg="white" f={1} br="$4" minHeight={90} p="$4" gap="$4" tag="form">
       <Controller
         control={control}
         name="content"
-        render={({ field }) => <TextAreaField field={field} error={errors?.content} placeholder="Qu'est-ce qui te passe par la tête ?" />}
+        render={({ field }) => <TextAreaField field={field} error={errors?.content} placeholder="Qu'est-ce qui te passe par la tête ?" autoFocus />}
       />
 
       {!!medias.length && <XStack gap="$2" flexWrap="wrap">
@@ -95,6 +118,16 @@ export const PostForm = (
             return <VideoPlayer key={uri} source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />
         })}
       </XStack>}
+
+      {audio && <XStack gap="$2">
+        <AudioPlayer {...audio} f={1} />
+        <Button chromeless p={0} circular icon={<Trash size="$1" />} onPress={() => setValue('audio', undefined)} />
+      </XStack>}
+
+      {isRecordingAudio && <AudioRecorder height={50} autoRecord onStop={(audio) => {
+        setIsRecordingAudio(false)
+        if (audio) addAudio(audio)
+      }} />}
 
       <XStack gap="$2">
         <Button icon={
@@ -134,7 +167,7 @@ export const PostForm = (
               }}
             />
           ) : <FileVideo size="$1" />} px="$3" onPress={pickMedia(MediaTypeOptions.Videos)} />
-        <Button icon={<Mic size="$1" />} px="$3" />
+        <Button icon={<Mic size="$1" />} px="$3" onPress={() => setIsRecordingAudio(true)} />
         <Button icon={<Tags size="$1" />} px="$3" />
       </XStack>
 
@@ -143,9 +176,11 @@ export const PostForm = (
         disabled={isSubmitting}
         hoverStyle={{ scale: 0.9 }}
         pressStyle={{ scale: 0.9 }}
+        fontWeight="700"
+        fontSize="$5"
         iconAfter={
           <AnimatePresence>
-            {isSubmitting && (
+            {isSubmitting ? (
               <Spinner
                 color="$color"
                 key="loading-spinner"
@@ -161,7 +196,7 @@ export const PostForm = (
                   y: 4,
                 }}
               />
-            )}
+            ) : <SendHorizontal size="$1" />}
           </AnimatePresence>
         }
       >

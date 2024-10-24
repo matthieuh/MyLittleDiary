@@ -24,9 +24,10 @@ export const TextAreaField = ({
   placeholder,
   isSubmitting,
   field,
-  error
+  error,
+  ...rest
 }: TextAreaFieldProps) => {
-  const { maxLength, value, onBlur, onChange, size, ...rest } = field
+  const { maxLength, value, onBlur, onChange, size } = field
 
   const themeName = useThemeName();
   const id = useId();
@@ -51,6 +52,8 @@ export const TextAreaField = ({
           id={id}
           rows={5}
           h={150}
+          maxLength={maxLength}
+          onBlur={onBlur}
           {...rest}
         />
         <FieldError message={error?.message} />

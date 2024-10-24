@@ -1,11 +1,12 @@
 import { router } from "expo-router";
-import { Card, getTokens, Image, Paragraph, Separator, Text, View, XStack } from "tamagui";
+import { Card, getTokens, Image, Paragraph, Separator, Text, View, XStack, YStack } from "tamagui";
 
 import { Post as PostType } from "@/state/atoms";
 import { formatDate } from "@/utils/format";
 import { useState } from "react";
 import { getSizeKeepsAspectRatio } from "@/utils/media";
 import { VideoPlayer } from "./video-player";
+import { AudioPlayer } from "./audio-player";
 
 export type PostProps = PostType;
 
@@ -13,7 +14,7 @@ const CARD_PADDING = '$4'
 const PICTURE_OVERLAPPING = 10
 const PICTURE_WIDTH = 60
 
-export const Post = ({ id, content, medias = [], createdAt }: PostProps) => {
+export const Post = ({ id, content, medias = [], audio, createdAt }: PostProps) => {
   const [nbPicturesDisplayable, setNbPicturesDisplayable] = useState(3);
 
   return (
@@ -41,13 +42,12 @@ export const Post = ({ id, content, medias = [], createdAt }: PostProps) => {
         })}</Text>
       </XStack>}
       <Paragraph numberOfLines={1}>{content}</Paragraph>
-      {!!medias.length && (
-        <>
-          <Separator my="$2" />
+      {!!(medias.length || audio) && <Separator my="$2" />}
+      <YStack gap="$2">
+        {!!medias.length && (
           <XStack>
             {medias.slice(0, nbPicturesDisplayable).map(({ type, uri, width, height }, index) => {
               const mediaContainerProps = {
-                key: uri,
                 elevation: '$1',
                 ...(index > 0 && { ml: -PICTURE_OVERLAPPING })
               }
@@ -57,10 +57,10 @@ export const Post = ({ id, content, medias = [], createdAt }: PostProps) => {
                 br: "$4"
               }
               if (type === 'image')
-                return <View {...mediaContainerProps}><Image {...mediaProps} /></View>
+                return <View key={uri} {...mediaContainerProps}><Image {...mediaProps} /></View>
 
               if (type === 'video')
-                return <View {...mediaContainerProps}><VideoPlayer {...mediaProps} controllable={false} /></View>
+                return <View key={uri} {...mediaContainerProps}><VideoPlayer {...mediaProps} controllable={false} /></View>
             })}
             {medias.length > nbPicturesDisplayable && (
               <XStack elevation="$1" bg="$white2" h={PICTURE_WIDTH} w={PICTURE_WIDTH} br="$2" jc="center" ai="center" ml={-PICTURE_OVERLAPPING} borderWidth="$0.5" borderColor="$gray6">
@@ -68,8 +68,9 @@ export const Post = ({ id, content, medias = [], createdAt }: PostProps) => {
               </XStack>
             )}
           </XStack>
-        </>
-      )}
+        )}
+        {audio && <XStack><AudioPlayer {...audio} /></XStack>}
+      </YStack>
 
     </Card>
   );
