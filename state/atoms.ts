@@ -20,10 +20,14 @@ export const addPostAtom = atom(null, async (get, set, state: Omit<Post, 'id' | 
   const posts = await get(postsAtom)
   const newPost = { ...state, id: randomUUID(), createdAt: new Date() }
   set(postsAtom, [...posts, newPost])
-  // set(postsAtom, [])
 })
 
 export const usePost = (id: string) => {
   const posts = useAtomValue(postsAtom);
   return posts.find((post) => post.id === id);
 }
+
+export const deletePostAtom = atom(null, async (get, set, id: string) => {
+  const posts = await get(postsAtom)
+  set(postsAtom, posts.filter((post) => post.id !== id))
+})

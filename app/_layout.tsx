@@ -10,6 +10,8 @@ import { Button, XStack } from 'tamagui';
 import { ArrowLeft, Ellipsis, FileEdit } from '@tamagui/lucide-icons';
 
 import config from '../tamagui.config'
+import { useAtom, useSetAtom } from 'jotai';
+import { deletePostAtom } from '@/state/atoms';
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -57,6 +59,7 @@ const Providers = ({ children, ...rest }: { children: React.ReactNode }) => {
 function RootLayoutNav() {
   const colorScheme = useColorScheme()
   const { showActionSheetWithOptions } = useActionSheet();
+  const deletePost = useSetAtom(deletePostAtom)
 
   return (
 
@@ -98,9 +101,10 @@ function RootLayoutNav() {
                       options: ['Supprimer', 'Annuler'],
                       cancelButtonIndex: 1,
                       destructiveButtonIndex: 0,
-                    }, (buttonIndex) => {
+                    }, async (buttonIndex) => {
                       if (buttonIndex === 0) {
-                        console.log('delete')
+                        await deletePost(id)
+                        router.navigate('/')
                       }
                     })
                 }} />
