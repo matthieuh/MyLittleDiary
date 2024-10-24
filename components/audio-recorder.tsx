@@ -124,7 +124,7 @@ export const AudioRecorder = ({ height = 50, autoRecord = false, onStop }: Audio
         px="$3"
         chromeless
         onPress={async () => {
-          await stopRecording()
+          if (isRecording) await stopRecording()
           if (onStop && recording) {
             onStop(recording)
           }

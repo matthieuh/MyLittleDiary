@@ -91,7 +91,7 @@ export const PostForm = (
 
   const addAudio = async (audio: Audio.Recording) => {
     const uri = audio.getURI();
-    const { durationMillis, ...status } = await audio.getStatusAsync()
+    const { durationMillis } = await audio.getStatusAsync()
 
     if (uri) {
       setValue('audio', {
