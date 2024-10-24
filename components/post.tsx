@@ -36,10 +36,7 @@ export const Post = ({ id, content, medias = [], audio, createdAt }: PostProps) 
       }}
     >
       {createdAt && <XStack ai="baseline">
-        <Text fontWeight="700" mb="$2" fontFamily="$mono">{formatDate(createdAt)}</Text><Text fontSize="$2"> à {formatDate(createdAt, {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}</Text>
+        <Text fontWeight="700" mb="$2" fontFamily="$mono">{formatDate(createdAt, { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
       </XStack>}
       <Paragraph numberOfLines={1}>{content}</Paragraph>
       {!!(medias.length || audio) && <Separator my="$2" />}

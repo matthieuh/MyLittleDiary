@@ -17,7 +17,7 @@ export default function Edit() {
   useEffect(() => {
     if (post) {
       router.setParams({
-        title: formatDate(post.createdAt),
+        title: formatDate(post.createdAt, { day: 'numeric', month: 'long', year: 'numeric' }),
       });
     }
   }, [post?.createdAt]);

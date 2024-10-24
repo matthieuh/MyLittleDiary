@@ -1,6 +1,6 @@
 import { getLocales } from 'expo-localization';
 
-export const formatDate = (date: Date, options: Intl.DateTimeFormatOptions = {}) => {
+export const formatDate = (date: Date | string, options: Intl.DateTimeFormatOptions = {}) => {
   const defaultLocale = getLocales()[0]?.languageCode || 'en';
   
   return new Intl.DateTimeFormat(defaultLocale, options).format(
