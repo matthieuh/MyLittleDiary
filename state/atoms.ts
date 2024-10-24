@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { randomUUID } from 'expo-crypto';
 import { AudioSchema, MediaSchema } from '@/components/post-form';
 import { z } from 'zod';
+import { atomWithDebounce } from '@/utils/jotai';
 
 export type Post = {
   id: string;
@@ -15,6 +16,19 @@ export type Post = {
 
 const storage = createJSONStorage<Post[]>(() => AsyncStorage)
 export const postsAtom = atomWithStorage<Post[]>('posts', [], storage);
+
+export const debouncedQueryAtom = atomWithDebounce('', 300);
+
+export const orderedPostsAtom = atom(async get => {
+  const posts = await get(postsAtom)
+  return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+})
+
+export const orderedAndFilteredByQueryPostsAtom = atom( async (get) => {
+  const query = get(debouncedQueryAtom.debouncedValueAtom)
+  const orderedPosts = await get(orderedPostsAtom)
+  return query?.length ? orderedPosts.filter((post) => post.content.toLowerCase().includes(query.toLowerCase())) : orderedPosts
+})
 
 export const addPostAtom = atom(null, async (get, set, state: Omit<Post, 'id' | 'createdAt'>) => {
   const posts = await get(postsAtom)
