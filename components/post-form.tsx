@@ -1,10 +1,9 @@
 import { View, Button, AnimatePresence, Spinner, XStack, Image } from "tamagui";
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { TextAreaField } from "./textarea-field";
-import { FileVideo, ImagePlus, Mic, SendHorizontal, Tags, Trash } from "@tamagui/lucide-icons";
+import { FileVideo, ImagePlus, Mic, Minus, MinusCircle, SendHorizontal, Tags, Trash } from "@tamagui/lucide-icons";
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { VideoPlayer } from "./video-player";
 import { getSizeKeepsAspectRatio } from "@/utils/media";
@@ -54,6 +53,7 @@ export const PostForm = (
     watch,
   } = useForm<z.infer<typeof PostSchema>>({ resolver, defaultValues: { medias: [], ...defaultValues } });
 
+  const content = watch('content')
   const medias = watch('medias', [])
   const audio = watch('audio')
 
@@ -106,18 +106,32 @@ export const PostForm = (
       <Controller
         control={control}
         name="content"
-        render={({ field }) => <TextAreaField field={field} error={errors?.content} placeholder="Qu'est-ce qui te passe par la tête ?" autoFocus />}
+        render={({ field }) => <TextAreaField field={field} error={errors?.content} placeholder="Qu'est-ce qui te passe par la tête ?" autoFocus={!content} />}
       />
 
-      {!!medias.length && <XStack gap="$2" flexWrap="wrap">
-        {medias.map(({ type, uri, width, height }) => {
-          if (type === 'image')
-            return <Image key={uri} source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />
-
-          if (type === 'video')
-            return <VideoPlayer key={uri} source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />
-        })}
-      </XStack>}
+      {!!medias.length && (
+        <XStack gap="$4" flexWrap="wrap">
+          {medias.map(({ type, uri, width, height }) => (
+            <View key={uri} position="relative">
+              {type === 'image' && <Image source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />}
+              {type === 'video' && <VideoPlayer source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />}
+              <Button
+                size="$2"
+                position="absolute"
+                t="$-2"
+                r="$-2"
+                p={0}
+                bg="$red9"
+                circular
+                icon={<Minus size="$1" color="$accentBackground" />} 
+                hoverStyle={{ scale: 0.9 }}
+                pressStyle={{ scale: 0.9 }}
+                onPress={() => setValue('medias', medias.filter(media => media.uri !== uri))}
+              />
+            </View>
+          ))}
+        </XStack>
+      )}
 
       {audio && <XStack gap="$2">
         <AudioPlayer {...audio} f={1} />
@@ -130,45 +144,62 @@ export const PostForm = (
       }} />}
 
       <XStack gap="$2">
-        <Button icon={
-          loadingMedia === MediaTypeOptions.Images ? (
-            <Spinner
-              color="$color"
-              key="loading-spinner"
-              opacity={1}
-              y={0}
-              animation="quick"
-              enterStyle={{
-                opacity: 0,
-                y: 4,
-              }}
-              exitStyle={{
-                opacity: 0,
-                y: 4,
-              }}
-            />
-          ) : <ImagePlus size="$1" />
-        } px="$3" onPress={pickMedia(MediaTypeOptions.Images)} />
-        <Button icon={
-          loadingMedia === MediaTypeOptions.Videos ? (
-            <Spinner
-              color="$color"
-              key="loading-spinner"
-              opacity={1}
-              y={0}
-              animation="quick"
-              enterStyle={{
-                opacity: 0,
-                y: 4,
-              }}
-              exitStyle={{
-                opacity: 0,
-                y: 4,
-              }}
-            />
-          ) : <FileVideo size="$1" />} px="$3" onPress={pickMedia(MediaTypeOptions.Videos)} />
-        <Button icon={<Mic size="$1" />} px="$3" onPress={() => setIsRecordingAudio(true)} />
-        <Button icon={<Tags size="$1" />} px="$3" />
+        <Button
+          icon={
+            loadingMedia === MediaTypeOptions.Images ? (
+              <Spinner
+                color="$color"
+                key="loading-spinner"
+                opacity={1}
+                y={0}
+                animation="quick"
+                enterStyle={{
+                  opacity: 0,
+                  y: 4,
+                }}
+                exitStyle={{
+                  opacity: 0,
+                  y: 4,
+                }}
+              />
+            ) : (
+              <ImagePlus size="$1" />
+            )
+          }
+          px="$3"
+          onPress={pickMedia(MediaTypeOptions.Images)}
+          hoverStyle={{ scale: 0.9 }}
+          pressStyle={{ scale: 0.9 }}
+        />
+        <Button
+          icon={
+            loadingMedia === MediaTypeOptions.Videos ? (
+              <Spinner
+                color="$color"
+                key="loading-spinner"
+                opacity={1}
+                y={0}
+                animation="quick"
+                enterStyle={{
+                  opacity: 0,
+                  y: 4,
+                }}
+                exitStyle={{
+                  opacity: 0,
+                  y: 4,
+                }}
+              />
+            ) : (
+              <FileVideo size="$1" />
+            )}
+          px="$3"
+          onPress={pickMedia(MediaTypeOptions.Videos)}
+          hoverStyle={{ scale: 0.9 }}
+          pressStyle={{ scale: 0.9 }}
+        />
+        <Button icon={<Mic size="$1" />} px="$3" onPress={() => setIsRecordingAudio(true)} hoverStyle={{ scale: 0.9 }}
+          pressStyle={{ scale: 0.9 }} />
+        {/* <Button icon={<Tags size="$1" />} px="$3" /> */}
       </XStack>
 
       <Button

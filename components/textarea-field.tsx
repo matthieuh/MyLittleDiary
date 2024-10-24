@@ -11,7 +11,7 @@ import {
 import { FieldError } from "@/components/field-error";
 import { FieldError as FieldErrorType } from "react-hook-form";
 
-type TextAreaFieldProps = {
+type TextAreaFieldProps = TextAreaProps & {
   label?: string;
   placeholder?: string;
   isSubmitting?: boolean;
