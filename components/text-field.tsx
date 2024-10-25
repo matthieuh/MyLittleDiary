@@ -1,10 +1,9 @@
-import { useStringFieldInfo, useTsController } from '@ts-react/form'
-import { useId } from 'react'
+import { forwardRef, useId } from 'react'
 import { Fieldset, Input, InputProps, Label, Theme, useThemeName } from 'tamagui'
 import { FieldError } from './field-error'
 import { FieldError as FieldErrorType } from "react-hook-form";
 
-type TextFieldProps = {
+type TextFieldProps = InputProps & {
   label?: string;
   placeholder?: string;
   isSubmitting?: boolean;
@@ -12,14 +11,15 @@ type TextFieldProps = {
   error?: FieldErrorType;
 }
 
-export const TextField = ({
+export const TextField = forwardRef<Input, TextFieldProps>(({
   label,
   placeholder,
   isSubmitting,
   field,
-  error
-}: TextFieldProps) => {
-  const { maxLength, value, onBlur, onChange, ...rest } = field
+  error,
+  ...rest
+}, ref) => {
+  const { maxLength, value, onBlur, onChange,  } = field
 
   const themeName = useThemeName()
   const id = useId()
@@ -33,6 +33,7 @@ export const TextField = ({
           </Label>
         )}
         <Input
+          ref={ref}
           disabled={isSubmitting}
           onChangeText={(text) => {
             if (onChange) {
@@ -41,10 +42,13 @@ export const TextField = ({
           }}
           placeholder={placeholder}
           id={id}
+          value={value}
+          onBlur={onBlur}
+          maxLength={maxLength}
           {...rest}
         />
-        <FieldError message={error?.errorMessage} />
+        <FieldError message={error?.message} />
       </Fieldset>
     </Theme>
   )
-}
+})

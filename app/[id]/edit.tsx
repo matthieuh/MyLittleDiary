@@ -3,13 +3,14 @@ import { useSetAtom } from 'jotai'
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-import { PostForm, PostSchema } from "@/components/post-form";
+import { PostForm } from "@/components/post-form";
 import { editPostAtom, usePost } from "@/state/atoms";
 import { Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useEffect } from "react";
 import { formatDate } from "@/utils/format";
 import { z } from "zod";
+import { PostSchema } from "@/schemas";
 
 export default function Edit() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -34,7 +35,7 @@ export default function Edit() {
   return (
     <YStack fullscreen f={1} bg="$white1">
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <ScrollView contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled">
         <PostForm
           onSubmit={handleSubmit}
           defaultValues={{

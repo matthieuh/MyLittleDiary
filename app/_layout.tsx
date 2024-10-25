@@ -12,6 +12,7 @@ import { ArrowLeft, Ellipsis, FileEdit } from '@tamagui/lucide-icons';
 import config from '../tamagui.config'
 import { useAtom, useSetAtom } from 'jotai';
 import { deletePostAtom } from '@/state/atoms';
+import { PortalProvider } from 'tamagui';
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -48,8 +49,8 @@ const Providers = ({ children, ...rest }: { children: React.ReactNode }) => {
           config={config}
           defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}
           {...rest}
-        >{
-            children}
+        >
+          {children}
         </TamaguiProvider>
       </ActionSheetProvider>
     </GestureHandlerRootView>
@@ -97,16 +98,16 @@ function RootLayoutNav() {
               <XStack gap="$2">
                 <Button circular size="$3" icon={<FileEdit />} scaleIcon={1.6} onPress={() => router.replace(`/${id}/edit`)} />
                 <Button circular size="$3" icon={<Ellipsis />} scaleIcon={1.6} onPress={() => {
-                    showActionSheetWithOptions({
-                      options: ['Supprimer', 'Annuler'],
-                      cancelButtonIndex: 1,
-                      destructiveButtonIndex: 0,
-                    }, async (buttonIndex) => {
-                      if (buttonIndex === 0) {
-                        await deletePost(id)
-                        router.navigate('/')
-                      }
-                    })
+                  showActionSheetWithOptions({
+                    options: ['Supprimer', 'Annuler'],
+                    cancelButtonIndex: 1,
+                    destructiveButtonIndex: 0,
+                  }, async (buttonIndex) => {
+                    if (buttonIndex === 0) {
+                      await deletePost(id)
+                      router.navigate('/')
+                    }
+                  })
                 }} />
               </XStack>
             ),

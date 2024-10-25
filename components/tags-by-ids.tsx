@@ -13,7 +13,7 @@ export const TagsByIds = ({ ids, tagProps = {}, ...rest }: TagsProps) => {
   return (
     <XStack gap="$2" flexWrap="wrap" {...rest}>
       {tagsByIds.map((tag) => (
-        <Tag key={tag.id} {...tag} isActive {...tagProps} />
+        <Tag key={tag.id} name={tag.name} isActive {...tagProps} />
       ))}
     </XStack>
   )

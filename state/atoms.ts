@@ -69,3 +69,8 @@ export const useTagsByIds = (tagIds: string[] = []) => {
   const tags = useAtomValue(tagsAtom);
   return tags.filter((tag) => tagIds.includes(tag.id));
 }
+
+export const addTagAtom = atom(null, async (get, set, name: string) => {
+  const tags = await get(tagsAtom)
+  set(tagsAtom, [...tags, { id: randomUUID(), name }])
+})
