@@ -1,5 +1,5 @@
 {
-  "name": "minijournal",
+  "name": "mylittlediary",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -28,6 +28,7 @@
     "expo-av": "~14.0.7",
     "expo-constants": "~16.0.2",
     "expo-crypto": "~13.0.2",
+    "expo-dev-client": "~4.0.28",
     "expo-font": "~12.0.10",
     "expo-image-picker": "~15.0.7",
     "expo-linking": "~6.3.1",
@@ -36,6 +37,7 @@
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
+    "expo-updates": "~0.25.27",
     "expo-video": "^1.2.7",
     "expo-web-browser": "~13.0.3",
     "jotai": "^2.10.1",
