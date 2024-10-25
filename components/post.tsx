@@ -7,6 +7,7 @@ import { useState } from "react";
 import { getSizeKeepsAspectRatio } from "@/utils/media";
 import { VideoPlayer } from "./video-player";
 import { AudioPlayer } from "./audio-player";
+import { TagsByIds } from "./tags-by-ids";
 
 export type PostProps = PostType;
 
@@ -14,7 +15,7 @@ const CARD_PADDING = '$4'
 const PICTURE_OVERLAPPING = 10
 const PICTURE_WIDTH = 60
 
-export const Post = ({ id, content, medias = [], audio, createdAt }: PostProps) => {
+export const Post = ({ id, content, medias = [], audio, tagIds, createdAt }: PostProps) => {
   const [nbPicturesDisplayable, setNbPicturesDisplayable] = useState(3);
 
   return (
@@ -39,7 +40,7 @@ export const Post = ({ id, content, medias = [], audio, createdAt }: PostProps) 
         <Text fontWeight="700" mb="$2" fontFamily="$mono">{formatDate(createdAt, { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</Text>
       </XStack>}
       <Paragraph numberOfLines={1}>{content}</Paragraph>
-      {!!(medias.length || audio) && <Separator my="$2" />}
+      {!!(medias.length || audio || tagIds) && <Separator my="$2" />}
       <YStack gap="$2">
         {!!medias.length && (
           <XStack>
@@ -66,9 +67,9 @@ export const Post = ({ id, content, medias = [], audio, createdAt }: PostProps) 
             )}
           </XStack>
         )}
-        {audio && <XStack><AudioPlayer {...audio} /></XStack>}
+        {audio && <XStack><AudioPlayer {...audio} fontSize="$1" iconSize="$1" /></XStack>}
+        <TagsByIds ids={tagIds || []} tagProps={{ size: '$2' }} />
       </YStack>
-
     </Card>
   );
 }

@@ -6,7 +6,8 @@ import { formatDate } from "@/utils/format";
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { VideoPlayer } from "@/components/video-player";
 import { AudioPlayer } from "@/components/audio-player";
-import { useActionSheet } from '@expo/react-native-action-sheet';
+import { getSizeKeepsAspectRatio } from "@/utils/media";
+import { TagsByIds } from "@/components/tags-by-ids";
 
 export default function PostScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,7 +25,7 @@ export default function PostScreen() {
     return null;
   }
 
-  const { content, medias, audio } = post;
+  const { content, medias, audio, tagIds } = post;
 
   return (
     <YStack fullscreen bg="$white1">
@@ -34,15 +35,14 @@ export default function PostScreen() {
             data={medias}
             horizontal
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item: { type, uri } }) => {
+            renderItem={({ item: { type, uri, height, width } }) => {
               const mediaContainerProps = {
                 px: '$2',
                 pt: '$2',
               }
               const mediaProps = {
                 source: { uri },
-                h: 120,
-                w: 120,
+                ...(getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })),
                 br: "$4",
                 borderWidth: "$0.5",
                 borderColor: "$gray5"
@@ -57,6 +57,7 @@ export default function PostScreen() {
             }}
           />
           {audio && <XStack><AudioPlayer {...audio} mx="$4" /></XStack>}
+          <TagsByIds ids={tagIds || []} mx="$4" />
         </YStack>
         <Paragraph p="$4">
           {content}

@@ -1,17 +1,19 @@
 import { formatDuration } from '@/utils/format';
 import { PauseCircle, PlayCircle } from '@tamagui/lucide-icons';
 import { Audio } from 'expo-av';
-import { useEffect, useState } from 'react';
-import { Button, Text, XStack, XStackProps } from 'tamagui'
+import { ComponentProps, useEffect, useState } from 'react';
+import { Button, ButtonProps, Text, TextProps, XStack, XStackProps } from 'tamagui'
 
 
 type AudioPlayerProps = XStackProps & {
   uri: string;
   duration: number;
   controllable?: boolean;
+  fontSize?: TextProps['fontSize'];
+  iconSize?: ComponentProps<typeof PlayCircle>['size'];
 };
 
-export const AudioPlayer = ({ uri, duration, controllable = true, ...rest }: AudioPlayerProps) => {
+export const AudioPlayer = ({ uri, duration, controllable = true, fontSize, iconSize = "$1.5", ...rest }: AudioPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Audio.Sound>();
   const [position, setPosition] = useState<number>(0);
@@ -49,14 +51,14 @@ export const AudioPlayer = ({ uri, duration, controllable = true, ...rest }: Aud
   }, [sound]);
 
   return (
-    <XStack bg="$blue9" ai="center" br="$10" gap="$2" p="$2" pr="$4" {...rest}>
+    <XStack bg="$green8" ai="center" br="$10" gap="$2" px="$2.5" py="$2" pr="$4" {...rest}>
       <Button
-        icon={!!isPlaying ? <PauseCircle size="$1.5" /> : <PlayCircle size="$1.5" />}
-        onPress={isPlaying ? pauseSound : playSound}
         unstyled
+        icon={!!isPlaying ? <PauseCircle size={iconSize} /> : <PlayCircle size={iconSize} />}
+        onPress={isPlaying ? pauseSound : playSound}
         color="$white1"
       />
-      <Text color="$white1" fontWeight="700">{formatDuration(position)} / {formatDuration(duration)}</Text>
+      <Text color="$white1" fontWeight="700" fontSize={fontSize}>{formatDuration(position)} / {formatDuration(duration)}</Text>
     </XStack>
   );
 }

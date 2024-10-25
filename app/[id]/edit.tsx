@@ -3,12 +3,13 @@ import { useSetAtom } from 'jotai'
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-import { PostForm } from "@/components/post-form";
-import { addPostAtom, Post, usePost } from "@/state/atoms";
+import { PostForm, PostSchema } from "@/components/post-form";
+import { editPostAtom, usePost } from "@/state/atoms";
 import { Platform } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useEffect } from "react";
 import { formatDate } from "@/utils/format";
+import { z } from "zod";
 
 export default function Edit() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,10 +24,10 @@ export default function Edit() {
   }, [post?.createdAt]);
 
 
-  const addPost = useSetAtom(addPostAtom);
+  const editPost = useSetAtom(editPostAtom);
 
-  const handleSubmit = async (data: Pick<Post, 'content'>) => {
-    await addPost(data);
+  const handleSubmit = async (data: z.infer<typeof PostSchema>) => {
+    await editPost({ id, state: data });
     router.dismiss();
   };
 
@@ -39,6 +40,8 @@ export default function Edit() {
           defaultValues={{
             content: post?.content || '',
             medias: post?.medias || [],
+            audio: post?.audio,
+            tagIds: post?.tagIds || [],
           }}
           submitText="Mettre à jour"
         />

@@ -2,20 +2,34 @@ import { atom, useAtomValue } from 'jotai'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { randomUUID } from 'expo-crypto';
-import { AudioSchema, MediaSchema } from '@/components/post-form';
+import {  PostSchema } from '@/schemas';
 import { z } from 'zod';
 import { atomWithDebounce } from '@/utils/jotai';
 
-export type Post = {
+export type Post = z.infer<typeof PostSchema> & {
   id: string;
-  content: string;
-  medias?: z.infer<typeof MediaSchema>[];
-  audio?: z.infer<typeof AudioSchema>;
   createdAt: Date;
 };
 
-const storage = createJSONStorage<Post[]>(() => AsyncStorage)
-export const postsAtom = atomWithStorage<Post[]>('posts', [], storage);
+export type Tag = {
+  id: string;
+  name: string;
+}
+
+const postsStorage = createJSONStorage<Post[]>(() => AsyncStorage)
+export const postsAtom = atomWithStorage<Post[]>('posts', [], postsStorage);
+
+const tagsStorage = createJSONStorage<Tag[]>(() => AsyncStorage)
+export const tagsAtom = atomWithStorage<Tag[]>('tags', [
+  { id: 'colere', name: 'Colère' },
+  { id: 'honte', name: 'Honte' },
+  { id: 'inquietude', name: 'Inquiétude' },
+  { id: 'joie', name: 'Joie' },
+  { id: 'peur', name: 'Peur' },
+  { id: 'tristesse', name: 'Tristesse' },
+  { id: 'surprise', name: 'Surprise' },
+  { id: 'satisfaction', name: 'Satisfaction' },
+], tagsStorage);
 
 export const debouncedQueryAtom = atomWithDebounce('', 300);
 
@@ -24,16 +38,26 @@ export const orderedPostsAtom = atom(async get => {
   return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 })
 
-export const orderedAndFilteredByQueryPostsAtom = atom( async (get) => {
+export const orderedAndFilteredByQueryPostsAtom = atom(async (get) => {
   const query = get(debouncedQueryAtom.debouncedValueAtom)
   const orderedPosts = await get(orderedPostsAtom)
   return query?.length ? orderedPosts.filter((post) => post.content.toLowerCase().includes(query.toLowerCase())) : orderedPosts
 })
 
-export const addPostAtom = atom(null, async (get, set, state: Omit<Post, 'id' | 'createdAt'>) => {
+export const addPostAtom = atom(null, async (get, set, state: z.infer<typeof PostSchema>) => {
   const posts = await get(postsAtom)
   const newPost = { ...state, id: randomUUID(), createdAt: new Date() }
   set(postsAtom, [...posts, newPost])
+})
+
+export const editPostAtom = atom(null, async (get, set, { id, state }: { id: string, state: z.infer<typeof PostSchema> }) => {
+  const posts = await get(postsAtom)
+  set(postsAtom, posts.map((post) => post.id === id ? { ...post, ...state } : post))
+})
+
+export const deletePostAtom = atom(null, async (get, set, id: string) => {
+  const posts = await get(postsAtom)
+  set(postsAtom, posts.filter((post) => post.id !== id))
 })
 
 export const usePost = (id: string) => {
@@ -41,7 +65,7 @@ export const usePost = (id: string) => {
   return posts.find((post) => post.id === id);
 }
 
-export const deletePostAtom = atom(null, async (get, set, id: string) => {
-  const posts = await get(postsAtom)
-  set(postsAtom, posts.filter((post) => post.id !== id))
-})
+export const useTagsByIds = (tagIds: string[] = []) => {
+  const tags = useAtomValue(tagsAtom);
+  return tags.filter((tag) => tagIds.includes(tag.id));
+}

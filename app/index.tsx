@@ -7,11 +7,14 @@ import { orderedAndFilteredByQueryPostsAtom } from "@/state/atoms";
 import { useAtomValue } from "jotai";
 import { FlatList } from "react-native";
 import { PostsFilter } from "@/components/posts-filter";
+import { tags } from "react-native-svg/lib/typescript/xmlTags";
 
 export default function Index() {
   const insets = useSafeAreaInsets();
 
   const posts = useAtomValue(orderedAndFilteredByQueryPostsAtom);
+
+  console.log({ tags: posts.map(post => ({ tags: post.tagIds })) })
 
   return (
     <YStack fullscreen mx="$4">
