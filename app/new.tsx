@@ -14,7 +14,6 @@ export default function New() {
   const addPost = useSetAtom(addPostAtom);
 
   const handleSubmit = async (data: z.infer<typeof PostSchema>) => {
-    console.log('addPost', { data });
     await addPost(data);
     router.dismiss();
   };

@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { Card, getTokens, Image, Paragraph, Separator, Text, View, XStack, YStack } from "tamagui";
 
 import { Post as PostType } from "@/state/atoms";
@@ -26,7 +26,9 @@ export const Post = ({ id, content, medias = [], audio, tagIds, createdAt }: Pos
       p={CARD_PADDING}
       hoverStyle={{ scale: 0.98 }}
       pressStyle={{ scale: 0.98 }}
-      onPress={() => router.push(`/${id}`)}
+      onPress={() => {
+        router.push(`/${id}?title=${formatDate(createdAt, { day: 'numeric', month: 'long', year: 'numeric' })}` as Href)
+      }}
       onLayout={(event) => {
         const { width } = event.nativeEvent.layout;
         const padding = getTokens().space[CARD_PADDING].val

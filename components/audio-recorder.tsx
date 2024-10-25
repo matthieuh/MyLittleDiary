@@ -100,7 +100,7 @@ export const AudioRecorder = ({ height = 50, autoRecord = false, onStop }: Audio
           onStop?.()
         }}
       />
-      <XStack px="$4" py="$2" bg="$blue9" gap="$2" br="$10" ai="center" f={1}>
+      <XStack px="$4" py="$2" bg="$green8" gap="$2" br="$10" ai="center" f={1}>
         <Button
           icon={!!isRecording ? <PauseCircle size="$1.5" /> : <PlayCircle size="$1.5" />}
           onPress={isRecording ? stopRecording : startRecording}
@@ -109,8 +109,8 @@ export const AudioRecorder = ({ height = 50, autoRecord = false, onStop }: Audio
         />
         <ScrollView
           contentInsetAdjustmentBehavior="automatic">
-          {duration > 0 && <Animated.View style={{ backgroundColor: getTokens().color['$blue9Light'].val, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', flex: 1, height: '100%' }}>
-            <Animated.View entering={SlideInRight} style={[{ display: 'flex', flexDirection: 'row', overflow: 'hidden', backgroundColor: getTokens().color['$blue9Light'].val, gap: 6, alignItems: 'center' }, style]}>
+          {duration > 0 && <Animated.View style={{ backgroundColor: getTokens().color['$green8Light'].val, display: 'flex', flexDirection: 'row-reverse', alignItems: 'center', flex: 1, height: '100%' }}>
+            <Animated.View entering={SlideInRight} style={[{ display: 'flex', flexDirection: 'row', overflow: 'hidden', backgroundColor: getTokens().color['$green8Light'].val, gap: 6, alignItems: 'center' }, style]}>
               {temp.map((t, index) => {
                 return <Animated.View key={index} entering={ZoomIn} style={{ height: t > 6 ? t : 6, width: 4, borderRadius: 200, backgroundColor: getTokens().color['$white1'].val, }} />
               })}

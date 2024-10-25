@@ -11,15 +11,8 @@ import { TagsByIds } from "@/components/tags-by-ids";
 
 export default function PostScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  
   const post = usePost(id);
-
-  useEffect(() => {
-    if (post) {
-      router.setParams({
-        title: formatDate(post.createdAt, { day: 'numeric', month: 'long', year: 'numeric' }),
-      });
-    }
-  }, [post?.createdAt]);
 
   if (!post) {
     return null;
