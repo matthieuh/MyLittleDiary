@@ -1,10 +1,11 @@
-import { atom, useAtomValue } from 'jotai'
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { atomWithStorage, createJSONStorage } from 'jotai/utils'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { randomUUID } from 'expo-crypto';
 import {  PostSchema } from '@/schemas';
 import { z } from 'zod';
 import { atomWithDebounce } from '@/utils/jotai';
+import { useEffect, useState } from 'react';
 
 export type Post = z.infer<typeof PostSchema> & {
   id: string;
@@ -60,11 +61,25 @@ export const deletePostAtom = atom(null, async (get, set, id: string) => {
   set(postsAtom, posts.filter((post) => post.id !== id))
 })
 
-export const usePost = (id: string) => {
-  const posts = useAtomValue(postsAtom);
+export const getPostAtom = atom(null, async (get, set, id: string) => {
+  const posts = await get(postsAtom)
   return posts.find((post) => post.id === id);
-}
+})
 
+export const usePost = (id: string) => {
+  const getPost = useSetAtom(getPostAtom);
+  const [post, setPost] = useState<Post | undefined>();
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      const result = await getPost(id);
+      setPost(result);
+    };
+    fetchPost();
+  }, [getPost, id]);
+
+  return post;
+}
 export const useTagsByIds = (tagIds: string[] = []) => {
   const tags = useAtomValue(tagsAtom);
   return tags.filter((tag) => tagIds.includes(tag.id));

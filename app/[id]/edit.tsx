@@ -32,6 +32,8 @@ export default function Edit() {
     router.dismiss();
   };
 
+  if (!post) return null
+
   return (
     <YStack fullscreen f={1} bg="$white1">
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
