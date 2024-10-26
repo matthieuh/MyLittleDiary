@@ -1,6 +1,10 @@
-# Mon Journal
+# My Little Diary
 
 This is a personal diary app coded using [Expo](https://expo.dev)
+
+## Preview
+
+![Preview](preview.gif)
 
 ## Get started
 
