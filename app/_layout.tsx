@@ -8,11 +8,10 @@ import { ActionSheetProvider, useActionSheet } from '@expo/react-native-action-s
 import { TamaguiProvider } from "@tamagui/core";
 import { Button, XStack } from 'tamagui';
 import { ArrowLeft, Ellipsis, FileEdit } from '@tamagui/lucide-icons';
+import { useSetAtom } from 'jotai';
+import { deletePostAtom } from '@/state/atoms';
 
 import config from '../tamagui.config'
-import { useAtom, useSetAtom } from 'jotai';
-import { deletePostAtom } from '@/state/atoms';
-import { PortalProvider } from 'tamagui';
 
 export { ErrorBoundary } from 'expo-router'
 
