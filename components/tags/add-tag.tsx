@@ -1,5 +1,5 @@
+import { Tag, type TagProps } from '@/components/tags/tag'
 import { Alert } from 'react-native'
-import { Tag, type TagProps } from './tag'
 
 type AddTagProps = TagProps & {
   onNewTag: (props: { tagName: string }) => void

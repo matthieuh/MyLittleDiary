@@ -8,7 +8,7 @@ import {
   useThemeName,
 } from 'tamagui'
 
-import { FieldError } from '@/components/field-error'
+import { FieldError } from '@/components/form/field-error'
 import type { FieldError as FieldErrorType } from 'react-hook-form'
 
 type TextAreaFieldProps = TextAreaProps & {

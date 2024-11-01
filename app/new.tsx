@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useSetAtom } from 'jotai'
 import { YStack } from 'tamagui'
 
-import { PostForm } from '@/components/post-form'
+import { PostForm } from '@/components/posts/post-form'
 import type { PostSchema } from '@/schemas'
 import { addPostAtom } from '@/state/atoms'
 import { Platform } from 'react-native'

@@ -18,12 +18,12 @@ import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { AnimatePresence, Button, Image, Spinner, View, XStack } from 'tamagui'
 import type { z } from 'zod'
-import { AddTag } from './add-tag'
-import { AudioPlayer } from './audio-player'
-import { AudioRecorder } from './audio-recorder'
-import { Tag } from './tag'
-import { TextAreaField } from './textarea-field'
-import { VideoPlayer } from './video-player'
+import { TextAreaField } from '../form/textarea-field'
+import { AudioPlayer } from '../medias/audio-player'
+import { AudioRecorder } from '../medias/audio-recorder'
+import { VideoPlayer } from '../medias/video-player'
+import { AddTag } from '../tags/add-tag'
+import { Tag } from '../tags/tag'
 
 const resolver = zodResolver(PostSchema)
 

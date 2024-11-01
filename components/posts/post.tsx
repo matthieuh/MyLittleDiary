@@ -1,4 +1,4 @@
-import { type Href, router } from 'expo-router'
+import { router } from 'expo-router'
 import {
   Card,
   Image,
@@ -11,13 +11,13 @@ import {
   getTokens,
 } from 'tamagui'
 
+import { AudioPlayer } from '@/components/medias/audio-player'
+import { VideoPlayer } from '@/components/medias/video-player'
+import { TagsByIds } from '@/components/tags/tags-by-ids'
 import type { Post as PostType } from '@/state/atoms'
 import { formatDate } from '@/utils/format'
 import { getSizeKeepsAspectRatio } from '@/utils/media'
 import { useState } from 'react'
-import { AudioPlayer } from './audio-player'
-import { TagsByIds } from './tags-by-ids'
-import { VideoPlayer } from './video-player'
 
 export type PostProps = PostType
 
@@ -45,7 +45,7 @@ export const Post = ({
       pressStyle={{ scale: 0.98 }}
       onPress={() => {
         router.push(
-          `/${id}?title=${formatDate(createdAt, { day: 'numeric', month: 'long', year: 'numeric' })}` as Href,
+          `/${id}?title=${formatDate(createdAt, { day: 'numeric', month: 'long', year: 'numeric' })}`,
         )
       }}
       onLayout={(event) => {
