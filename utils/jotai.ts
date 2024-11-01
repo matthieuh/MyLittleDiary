@@ -1,4 +1,4 @@
-import { atom, SetStateAction } from 'jotai'
+import { type SetStateAction, atom } from 'jotai'
 
 // https://jotai.org/docs/recipes/atom-with-debounce
 export const atomWithDebounce = <T>(

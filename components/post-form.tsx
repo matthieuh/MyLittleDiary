@@ -1,21 +1,29 @@
-import { View, Button, AnimatePresence, Spinner, XStack, Image } from "tamagui";
+import { type MediaSchema, PostSchema } from '@/schemas'
+import { addTagAtom, tagsAtom } from '@/state/atoms'
+import { getSizeKeepsAspectRatio } from '@/utils/media'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  FileVideo,
+  ImagePlus,
+  Mic,
+  Minus,
+  SendHorizontal,
+  Tags,
+  Trash,
+} from '@tamagui/lucide-icons'
+import type { Audio } from 'expo-av'
+import { MediaTypeOptions, launchImageLibraryAsync } from 'expo-image-picker'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { TextAreaField } from "./textarea-field";
-import { FileVideo, ImagePlus, Mic, Minus, SendHorizontal, Tags, Trash } from "@tamagui/lucide-icons";
-import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
-import { VideoPlayer } from "./video-player";
-import { getSizeKeepsAspectRatio } from "@/utils/media";
-import { useState } from "react";
-import { AudioRecorder } from "./audio-recorder";
-import { Audio } from "expo-av";
-import { AudioPlayer } from "./audio-player";
-import { MediaSchema, PostSchema } from "@/schemas";
-import { useAtomValue, useSetAtom } from "jotai";
-import { addTagAtom, tagsAtom } from "@/state/atoms";
-import { Tag } from "./tag";
-import { AddTag } from "./add-tag";
+import { AnimatePresence, Button, Image, Spinner, View, XStack } from 'tamagui'
+import type { z } from 'zod'
+import { AddTag } from './add-tag'
+import { AudioPlayer } from './audio-player'
+import { AudioRecorder } from './audio-recorder'
+import { Tag } from './tag'
+import { TextAreaField } from './textarea-field'
+import { VideoPlayer } from './video-player'
 
 const resolver = zodResolver(PostSchema)
 
@@ -25,9 +33,11 @@ type PostFormProps = {
   submitText?: string
 }
 
-export const PostForm = (
-  { onSubmit, defaultValues, submitText = 'Publier' }: PostFormProps
-) => {
+export const PostForm = ({
+  onSubmit,
+  defaultValues,
+  submitText = 'Publier',
+}: PostFormProps) => {
   const {
     control,
     setValue,
@@ -35,7 +45,7 @@ export const PostForm = (
     formState: { isSubmitting, errors },
     handleSubmit,
     watch,
-  } = useForm<z.infer<typeof PostSchema>>({ resolver, defaultValues });
+  } = useForm<z.infer<typeof PostSchema>>({ resolver, defaultValues })
 
   const tags = useAtomValue(tagsAtom)
   const addTag = useSetAtom(addTagAtom)
@@ -45,21 +55,30 @@ export const PostForm = (
   const audio = watch('audio', defaultValues?.audio)
   const tagIds = watch('tagIds', defaultValues?.tagIds || [])
 
-  const [loadingMedia, setLoadingMedia] = useState<MediaTypeOptions | undefined>();
-  const [isRecordingAudio, setIsRecordingAudio] = useState<Boolean>(false);
-  const [isAddingTags, setIsAddingTags] = useState<Boolean>(!!tagIds?.length);
+  const [loadingMedia, setLoadingMedia] = useState<
+    MediaTypeOptions | undefined
+  >()
+  const [isRecordingAudio, setIsRecordingAudio] = useState<boolean>(false)
+  const [isAddingTags, setIsAddingTags] = useState<boolean>(!!tagIds?.length)
 
   const pickMedia = (mediaTypes: MediaTypeOptions) => async () => {
-    setLoadingMedia(mediaTypes);
-    let result = await launchImageLibraryAsync({
+    setLoadingMedia(mediaTypes)
+    const result = await launchImageLibraryAsync({
       mediaTypes,
       allowsMultipleSelection: true,
-    });
-    setLoadingMedia(undefined);
+    })
+    setLoadingMedia(undefined)
 
     if (!result.canceled) {
       const newMedias: z.infer<typeof MediaSchema>[] = []
-      for (const { type, uri, height, width, duration, mimeType } of result.assets) {
+      for (const {
+        type,
+        uri,
+        height,
+        width,
+        duration,
+        mimeType,
+      } of result.assets) {
         newMedias.push({
           type,
           uri,
@@ -70,23 +89,19 @@ export const PostForm = (
         })
       }
 
-      setValue('medias', [
-        ...(getValues('medias') || []),
-        ...newMedias
-      ]);
-
+      setValue('medias', [...(getValues('medias') || []), ...newMedias])
     }
-  };
+  }
 
   const addAudio = async (audio: Audio.Recording) => {
-    const uri = audio.getURI();
+    const uri = audio.getURI()
     const { durationMillis } = await audio.getStatusAsync()
 
     if (uri) {
       setValue('audio', {
         uri,
         duration: durationMillis,
-      });
+      })
     }
   }
 
@@ -95,7 +110,14 @@ export const PostForm = (
       <Controller
         control={control}
         name="content"
-        render={({ field }) => <TextAreaField field={field} error={errors?.content} placeholder="Qu'est-ce qui te passe par la tête ?" autoFocus={!content} />}
+        render={({ field }) => (
+          <TextAreaField
+            field={field}
+            error={errors?.content}
+            placeholder="Qu'est-ce qui te passe par la tête ?"
+            autoFocus={!content}
+          />
+        )}
       />
 
       <AnimatePresence>
@@ -103,8 +125,28 @@ export const PostForm = (
           <XStack gap="$4" flexWrap="wrap">
             {medias.map(({ type, uri, width, height }) => (
               <View key={uri} position="relative">
-                {type === 'image' && <Image source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />}
-                {type === 'video' && <VideoPlayer source={{ uri }} {...getSizeKeepsAspectRatio({ height, width, maxHeight: 120 })} br="$4" />}
+                {type === 'image' && (
+                  <Image
+                    source={{ uri }}
+                    {...getSizeKeepsAspectRatio({
+                      height,
+                      width,
+                      maxHeight: 120,
+                    })}
+                    br="$4"
+                  />
+                )}
+                {type === 'video' && (
+                  <VideoPlayer
+                    source={{ uri }}
+                    {...getSizeKeepsAspectRatio({
+                      height,
+                      width,
+                      maxHeight: 120,
+                    })}
+                    br="$4"
+                  />
+                )}
                 <Button
                   size="$2"
                   position="absolute"
@@ -116,7 +158,12 @@ export const PostForm = (
                   icon={<Minus size="$1" color="$accentBackground" />}
                   hoverStyle={{ scale: 0.9 }}
                   pressStyle={{ scale: 0.9 }}
-                  onPress={() => setValue('medias', medias.filter(media => media.uri !== uri))}
+                  onPress={() =>
+                    setValue(
+                      'medias',
+                      medias.filter((media) => media.uri !== uri),
+                    )
+                  }
                 />
               </View>
             ))}
@@ -125,34 +172,56 @@ export const PostForm = (
       </AnimatePresence>
 
       <AnimatePresence>
-        {audio && <XStack gap="$2">
-          <AudioPlayer {...audio} f={1} />
-          <Button chromeless p={0} circular icon={<Trash size="$1" />} onPress={() => setValue('audio', undefined)} />
-        </XStack>}
+        {audio && (
+          <XStack gap="$2">
+            <AudioPlayer {...audio} f={1} />
+            <Button
+              chromeless
+              p={0}
+              circular
+              icon={<Trash size="$1" />}
+              onPress={() => setValue('audio', undefined)}
+            />
+          </XStack>
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {isRecordingAudio && <AudioRecorder height={50} autoRecord onStop={(audio) => {
-          setIsRecordingAudio(false)
-          if (audio) addAudio(audio)
-        }} />}
+        {isRecordingAudio && (
+          <AudioRecorder
+            height={50}
+            autoRecord
+            onStop={(audio) => {
+              setIsRecordingAudio(false)
+              if (audio) addAudio(audio)
+            }}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
         {isAddingTags && (
           <XStack gap="$2" flexWrap="wrap">
-            {tags.map(tag => {
+            {tags.map((tag) => {
               const isAdded = (tagIds || []).includes(tag.id)
               return (
-                <Tag key={tag.id} {...tag} isActive={isAdded} onPress={() => {
-                  if (isAdded) {
-                    setValue('tagIds', tagIds?.filter(tagId => tagId !== tag.id))
-                  } else
-                    setValue('tagIds', [
-                      ...(getValues('tagIds') || []),
-                      tag.id
-                    ]);
-                }} />
+                <Tag
+                  key={tag.id}
+                  {...tag}
+                  isActive={isAdded}
+                  onPress={() => {
+                    if (isAdded) {
+                      setValue(
+                        'tagIds',
+                        tagIds?.filter((tagId) => tagId !== tag.id),
+                      )
+                    } else
+                      setValue('tagIds', [
+                        ...(getValues('tagIds') || []),
+                        tag.id,
+                      ])
+                  }}
+                />
               )
             })}
             <AddTag onNewTag={({ tagName }) => addTag(tagName)} />
@@ -208,14 +277,27 @@ export const PostForm = (
               />
             ) : (
               <FileVideo size="$1" />
-            )}
+            )
+          }
           px="$3"
           onPress={pickMedia(MediaTypeOptions.Videos)}
           hoverStyle={{ scale: 0.9 }}
           pressStyle={{ scale: 0.9 }}
         />
-        <Button icon={<Mic size="$1" />} px="$3" onPress={() => setIsRecordingAudio(true)} hoverStyle={{ scale: 0.9 }} pressStyle={{ scale: 0.9 }} />
-        <Button icon={<Tags size="$1" />} px="$3" onPress={() => setIsAddingTags(state => !state)} hoverStyle={{ scale: 0.9 }} pressStyle={{ scale: 0.9 }} />
+        <Button
+          icon={<Mic size="$1" />}
+          px="$3"
+          onPress={() => setIsRecordingAudio(true)}
+          hoverStyle={{ scale: 0.9 }}
+          pressStyle={{ scale: 0.9 }}
+        />
+        <Button
+          icon={<Tags size="$1" />}
+          px="$3"
+          onPress={() => setIsAddingTags((state) => !state)}
+          hoverStyle={{ scale: 0.9 }}
+          pressStyle={{ scale: 0.9 }}
+        />
       </XStack>
 
       <Button
@@ -243,12 +325,14 @@ export const PostForm = (
                   y: 4,
                 }}
               />
-            ) : <SendHorizontal size="$1" />}
+            ) : (
+              <SendHorizontal size="$1" />
+            )}
           </AnimatePresence>
         }
       >
         {submitText}
       </Button>
     </View>
-  );
+  )
 }

@@ -1,13 +1,13 @@
-import { debouncedQueryAtom } from "@/state/atoms";
-import { Search } from "@tamagui/lucide-icons";
-import { useAtomValue, useSetAtom } from "jotai";
-import { useRef } from "react";
-import { Input, View, ViewProps, Text, YStack } from "tamagui";
+import { debouncedQueryAtom } from '@/state/atoms'
+import { Search } from '@tamagui/lucide-icons'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { useRef } from 'react'
+import { Input, Text, View, type ViewProps, YStack } from 'tamagui'
 
 export const PostsFilter = (props: ViewProps) => {
-  const inputRef = useRef(null);
-  const setDebouncedQuery = useSetAtom(debouncedQueryAtom.debouncedValueAtom);
-  const debouncedQuery = useAtomValue(debouncedQueryAtom.debouncedValueAtom);
+  const inputRef = useRef(null)
+  const setDebouncedQuery = useSetAtom(debouncedQueryAtom.debouncedValueAtom)
+  const debouncedQuery = useAtomValue(debouncedQueryAtom.debouncedValueAtom)
 
   return (
     <YStack>
@@ -23,7 +23,11 @@ export const PostsFilter = (props: ViewProps) => {
           <Search color="$placeholderColor" />
         </View>
       </View>
-      <Text fontWeight="700">{debouncedQuery?.length ? `Mes posts contenant "${debouncedQuery}"` : 'Tous mes posts'}</Text>
+      <Text fontWeight="700">
+        {debouncedQuery?.length
+          ? `Mes posts contenant "${debouncedQuery}"`
+          : 'Tous mes posts'}
+      </Text>
     </YStack>
-  );
+  )
 }

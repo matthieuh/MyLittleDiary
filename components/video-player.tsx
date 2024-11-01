@@ -1,19 +1,31 @@
-import { Pause, Play } from '@tamagui/lucide-icons';
-import { useVideoPlayer, VideoSource, VideoView, VideoViewProps } from 'expo-video';
-import { ComponentProps, useState } from 'react';
-import { Button, styled, View } from 'tamagui'
+import { Pause, Play } from '@tamagui/lucide-icons'
+import {
+  type VideoSource,
+  VideoView,
+  VideoViewProps,
+  useVideoPlayer,
+} from 'expo-video'
+import { type ComponentProps, useState } from 'react'
+import { Button, View, styled } from 'tamagui'
 
 const StyledVideoView = styled(VideoView)
 
-type VideoPlayerProps = Omit<ComponentProps<typeof StyledVideoView>, 'player'> & {
-  source: VideoSource;
-  controllable?: boolean;
-};
+type VideoPlayerProps = Omit<
+  ComponentProps<typeof StyledVideoView>,
+  'player'
+> & {
+  source: VideoSource
+  controllable?: boolean
+}
 
-export const VideoPlayer = ({ source, controllable = true, ...rest }: VideoPlayerProps) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+export const VideoPlayer = ({
+  source,
+  controllable = true,
+  ...rest
+}: VideoPlayerProps) => {
+  const [isPlaying, setIsPlaying] = useState(false)
 
-  const player = useVideoPlayer(source);
+  const player = useVideoPlayer(source)
 
   return (
     <View>
@@ -29,16 +41,16 @@ export const VideoPlayer = ({ source, controllable = true, ...rest }: VideoPlaye
           size="$8"
           icon={isPlaying ? <Pause /> : <Play />}
           onPress={() => {
-            if (!controllable) return;
+            if (!controllable) return
             if (isPlaying) {
-              player.pause();
+              player.pause()
             } else {
-              player.play();
+              player.play()
             }
-            setIsPlaying(!isPlaying);
+            setIsPlaying(!isPlaying)
           }}
         />
       </View>
     </View>
-  );
+  )
 }

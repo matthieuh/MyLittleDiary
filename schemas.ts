@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from 'zod'
 
 export const MediaSchema = z.object({
   type: z.enum(['image', 'video']).optional(),

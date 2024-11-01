@@ -1,22 +1,22 @@
-import { useId } from "react";
+import { useId } from 'react'
 import {
   Fieldset,
   Label,
   TextArea,
-  TextAreaProps,
+  type TextAreaProps,
   Theme,
   useThemeName,
-} from "tamagui";
+} from 'tamagui'
 
-import { FieldError } from "@/components/field-error";
-import { FieldError as FieldErrorType } from "react-hook-form";
+import { FieldError } from '@/components/field-error'
+import type { FieldError as FieldErrorType } from 'react-hook-form'
 
 type TextAreaFieldProps = TextAreaProps & {
-  label?: string;
-  placeholder?: string;
-  isSubmitting?: boolean;
-  field: TextAreaProps;
-  error?: FieldErrorType;
+  label?: string
+  placeholder?: string
+  isSubmitting?: boolean
+  field: TextAreaProps
+  error?: FieldErrorType
 }
 
 export const TextAreaField = ({
@@ -29,14 +29,14 @@ export const TextAreaField = ({
 }: TextAreaFieldProps) => {
   const { maxLength, value, onBlur, onChange, size } = field
 
-  const themeName = useThemeName();
-  const id = useId();
+  const themeName = useThemeName()
+  const id = useId()
 
   return (
-    <Theme name={error ? "red" : themeName} forceClassName>
+    <Theme name={error ? 'red' : themeName} forceClassName>
       <Fieldset>
         {!!label && (
-          <Label theme="alt1" size={size || "$3"} htmlFor={id}>
+          <Label theme="alt1" size={size || '$3'} htmlFor={id}>
             {label}
           </Label>
         )}
@@ -45,7 +45,8 @@ export const TextAreaField = ({
           value={value}
           onChangeText={(text) => {
             if (onChange) {
-              onChange(text as any); // TO SOLVE
+              // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+              onChange(text as any) // TO SOLVE
             }
           }}
           placeholder={placeholder}
@@ -59,5 +60,5 @@ export const TextAreaField = ({
         <FieldError message={error?.message} />
       </Fieldset>
     </Theme>
-  );
-};
+  )
+}

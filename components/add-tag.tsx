@@ -1,25 +1,31 @@
-import { Tag, TagProps } from "./tag"
-import { Alert } from "react-native";
+import { Alert } from 'react-native'
+import { Tag, type TagProps } from './tag'
 
 type AddTagProps = TagProps & {
   onNewTag: (props: { tagName: string }) => void
 }
 
 export const AddTag = ({ onNewTag, ...rest }: AddTagProps) => (
-  <Tag circular fontSize="$6" name="+" onPress={() => {
-    Alert.prompt('Ajouter un nouveau tag', undefined, [
-      {
-        text: 'Annuler',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      {
-        text: 'Ajouter',
-        onPress: (tagName) => {
-          if ((tagName)) onNewTag({ tagName })
+  <Tag
+    circular
+    fontSize="$6"
+    name="+"
+    onPress={() => {
+      Alert.prompt('Ajouter un nouveau tag', undefined, [
+        {
+          text: 'Annuler',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
         },
-        isPreferred: true
-      }
-    ])
-  }} {...rest} />
+        {
+          text: 'Ajouter',
+          onPress: (tagName) => {
+            if (tagName) onNewTag({ tagName })
+          },
+          isPreferred: true,
+        },
+      ])
+    }}
+    {...rest}
+  />
 )

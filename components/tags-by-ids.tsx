@@ -1,10 +1,10 @@
-import { useTagsByIds } from "@/state/atoms";
-import { XStack, XStackProps } from "tamagui";
-import { Tag, TagProps } from "./tag";
+import { useTagsByIds } from '@/state/atoms'
+import { XStack, type XStackProps } from 'tamagui'
+import { Tag, type TagProps } from './tag'
 
 export type TagsProps = XStackProps & {
-  ids: string[];
-  tagProps?: Partial<TagProps>;
+  ids: string[]
+  tagProps?: Partial<TagProps>
 }
 
 export const TagsByIds = ({ ids, tagProps = {}, ...rest }: TagsProps) => {

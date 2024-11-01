@@ -1,43 +1,50 @@
-import { YStack } from "tamagui";
+import { router, useLocalSearchParams } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
 import { useSetAtom } from 'jotai'
-import { router, useLocalSearchParams } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { YStack } from 'tamagui'
 
-import { PostForm } from "@/components/post-form";
-import { editPostAtom, usePost } from "@/state/atoms";
-import { Platform } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { useEffect } from "react";
-import { formatDate } from "@/utils/format";
-import { z } from "zod";
-import { PostSchema } from "@/schemas";
+import { PostForm } from '@/components/post-form'
+import type { PostSchema } from '@/schemas'
+import { editPostAtom, usePost } from '@/state/atoms'
+import { formatDate } from '@/utils/format'
+import { useEffect } from 'react'
+import { Platform } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
+import type { z } from 'zod'
 
 export default function Edit() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const post = usePost(id);
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const post = usePost(id || '')
 
   useEffect(() => {
     if (post) {
       router.setParams({
-        title: formatDate(post.createdAt, { day: 'numeric', month: 'long', year: 'numeric' }),
-      });
+        title: formatDate(post.createdAt, {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }),
+      })
     }
-  }, [post?.createdAt]);
+  }, [post])
 
-
-  const editPost = useSetAtom(editPostAtom);
+  const editPost = useSetAtom(editPostAtom)
 
   const handleSubmit = async (data: z.infer<typeof PostSchema>) => {
-    await editPost({ id, state: data });
-    router.dismiss();
-  };
+    if (!id) return
+    await editPost({ id, state: data })
+    router.dismiss()
+  }
 
   if (!post) return null
 
   return (
     <YStack fullscreen f={1} bg="$white1">
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-      <ScrollView contentInsetAdjustmentBehavior="automatic" keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps="handled"
+      >
         <PostForm
           onSubmit={handleSubmit}
           defaultValues={{
@@ -50,5 +57,5 @@ export default function Edit() {
         />
       </ScrollView>
     </YStack>
-  );
+  )
 }
