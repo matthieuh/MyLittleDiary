@@ -34,4 +34,8 @@ This is a personal diary app coded using [Expo](https://expo.dev)
 
 ### 📡 State
 
--  [Jotai](https://jotai.org/)
+- [Jotai](https://jotai.org/)
+
+###  Linting + Formatting
+
+- [Biome](https://biomejs.dev)
